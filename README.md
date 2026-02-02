@@ -1,6 +1,6 @@
 <div align="center">
 
-# forest-air-ir-rs
+# forestair-ir-rs
 #### Rust implementation of the ForestAir AC IR protocol
 
 <img alt="forestair-ir-rs logo" src="https://raw.githubusercontent.com/Dwarf1er/forestair-ir-rs/master/assets/forestair-ir-rs-logo.png" height="250" />
