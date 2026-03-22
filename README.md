@@ -21,14 +21,15 @@ This project implements an infrared transmitter for controlling [ForestAir](http
 
 <!-- mtoc-start -->
 
-* [Future Plans](#future-plans)
-* [Hardware Requirements](#hardware-requirements)
-* [Project Template](#project-template)
-* [System prerequisites](#system-prerequisites)
-* [Setup Script](#setup-script)
-* [ESP-IDF Submodules](#esp-idf-submodules)
-* [User Permissions for Serial](#user-permissions-for-serial)
-* [Building and Flashing](#building-and-flashing)
+* [Screenshot](#screenshot)
+* [Getting started](#getting-started)
+  * [Hardware Requirements](#hardware-requirements)
+  * [Project Template](#project-template)
+  * [System prerequisites](#system-prerequisites)
+  * [Setup Script](#setup-script)
+  * [ESP-IDF Submodules](#esp-idf-submodules)
+  * [User Permissions for Serial](#user-permissions-for-serial)
+  * [Building and Flashing](#building-and-flashing)
 * [ForestAir IR Protocol Overview](#forestair-ir-protocol-overview)
   * [IR Timing Specification](#ir-timing-specification)
   * [Pulse-Distance Encoding Diagram](#pulse-distance-encoding-diagram)
@@ -45,13 +46,15 @@ This project implements an infrared transmitter for controlling [ForestAir](http
 
 <!-- mtoc-end -->
 
-## Future Plans
+## Screenshot
 
-This project is currently a **proof of concept** to demonstrate the basics of the ForestAir IR protocol on an ESP32. In the future, I plan to expand the functionality to include:
-* Web interface to allow users on the same network as the ESP32 to access a page through mDNS (e.g., `ac.local`)
-* API for automation to allow integrations with other platforms such as `Home Assistant` or `ESPHome`
+The web UI:
 
-## Hardware Requirements
+![Web UI screenshot](./assets/screenshot.png)
+
+## Getting started
+
+### Hardware Requirements
 
 * ESP32 (any variant with RMT peripheral)
 * IR Transmitter (IR LED + driver)
@@ -63,7 +66,7 @@ RMT Channel: 0
 Carrier: 38 kHz @ 33% duty
 ```
 
-## Project Template
+### Project Template
 
 This project was generated using [the esp-idf-template](https://github.com/esp-rs/esp-idf-template)
 ```bash
@@ -71,7 +74,7 @@ cargo install cargo-generate
 cargo generate esp-rs/esp-idf-template cargo
 ```
 
-## System prerequisites
+### System prerequisites
 
 To get started with this project, make sure to install the following dependencies on your system.
 
@@ -85,7 +88,7 @@ Debian based (via apt):
 sudo apt-get install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0 dotenv
 ```
 
-## Setup Script
+### Setup Script
 
 After having installed the dependencies and having cloned the repository, run the setup script at the root of the repository:
 ```bash
@@ -93,7 +96,7 @@ chmod +x ./setup.sh
 ./setup.sh
 ```
 
-## ESP-IDF Submodules
+### ESP-IDF Submodules
 
 ESP-IDF uses git submodules for its dependencies. You need to initialize them:
 ```bash
@@ -101,27 +104,31 @@ cd .embuild/espressif/esp-idf/v<version number>
 git submodule update --init --recursive
 ```
 
-## User Permissions for Serial
+### User Permissions for Serial
 
-On Arch based distros, the `uucp` group has access to /dev/ttyUSB* devices (similar to `dialout` on Debian based distros). Add your user to this group and run `newgrp` to active your new permissions:
+On Arch-based distros, the `uucp` group controls access to `/dev/ttyUSB*` devices (equivalent to `dialout` on Debian-based distros). Add your user to the appropriate group:
+
+Arch-based:
+
 ```bash
 sudo usermod -aG uucp $USER
 newgrp uucp
 ```
 
-## Building and Flashing
+Debian-based:
 
-Run the following command to build the project:
-```
-cargo build
-```
-
-Once the project has been built, you can flash it to your ESP32 using the `espflash` tool:
 ```bash
-# command format: espflash flash target/<mcu-target>/debug/<your-project-name>
-# see https://github.com/esp-rs/esp-idf-template?tab=readme-ov-file#flash for more details
-# example:
-espflash flash target/xtensa-esp32-espidf/debug/forestair-ir-rs --monitor
+sudo usermod -aG dialout $USER
+newgrp dialout
+```
+
+### Building and Flashing
+
+Connect your ESP32, then:
+
+```bash
+cd forestair-ir-rs
+cargo run --release
 ```
 
 ## ForestAir IR Protocol Overview

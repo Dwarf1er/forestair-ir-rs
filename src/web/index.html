@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AC Control</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <main>
+        <header>
+            <h1>ForestAir</h1>
+            <button id="btn-power" class="power-btn" aria-label="Toggle power">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v6" />
+                    <path d="M6.8 6.8a8 8 0 1 0 10.4 0" />
+                </svg>
+            </button>
+        </header>
+
+        <section class="temp-section">
+            <button class="temp-btn" id="btn-temp-down" aria-label="Decrease temperature">−</button>
+            <div class="temp-display">
+                <span id="temp-value">24</span>
+                <span class="temp-unit">°C</span>
+            </div>
+            <button class="temp-btn" id="btn-temp-up" aria-label="Increase temperature">+</button>
+        </section>
+
+        <section class="modes">
+            <div class="mode-group">
+                <label class="group-label">Mode</label>
+                <div class="btn-row" id="mode-btns">
+                    <button class="mode-btn active" data-value="0">Auto</button>
+                    <button class="mode-btn" data-value="1">Cool</button>
+                    <button class="mode-btn" data-value="2">Dry</button>
+                    <button class="mode-btn" data-value="3">Fan</button>
+                    <button class="mode-btn" data-value="4">Heat</button>
+                </div>
+            </div>
+
+            <div class="mode-group">
+                <label class="group-label">Fan</label>
+                <div class="btn-row" id="fan-btns">
+                    <button class="mode-btn active" data-value="0">Auto</button>
+                    <button class="mode-btn" data-value="1">Low</button>
+                    <button class="mode-btn" data-value="2">Med</button>
+                    <button class="mode-btn" data-value="3">High</button>
+                </div>
+            </div>
+
+            <div class="mode-group swing-group">
+                <label class="group-label">Swing</label>
+                <button class="toggle-btn" id="btn-swing" data-active="false">Off</button>
+            </div>
+        </section>
+
+        <div id="status" class="status" aria-live="polite"></div>
+
+        <button id="btn-send" class="send-btn">Send Command</button>
+    </main>
+    <script src="app.js"></script>
+</body>
+
+</html>

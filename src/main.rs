@@ -1,42 +1,46 @@
-use std::thread;
-use std::time::Duration;
+use std::sync::{Arc, Mutex};
 
 use esp_idf_hal::prelude::Peripherals;
+use esp_idf_svc::eventloop::EspSystemEventLoop;
+use esp_idf_svc::nvs::EspDefaultNvsPartition;
+use esp_idf_svc::wifi::{BlockingWifi, EspWifi};
+use esp_wifi_provisioning::Provisioner;
 
+mod ac_server;
 mod ir_protocol;
 mod ir_tx;
 
-use ir_protocol::{pack_ir_payload, AcMode, IrData, Temperature};
+use ac_server::AcServer;
 use ir_tx::IrTx;
 
-use self::ir_protocol::FanMode;
-
 fn main() {
-    // It is necessary to call this function once. Otherwise, some patches to the runtime
-    // implemented by esp-idf-sys might not link properly. See https://github.com/esp-rs/esp-idf-template/issues/71
     esp_idf_svc::sys::link_patches();
-
-    // Bind the log crate to the ESP Logging facilities
     esp_idf_svc::log::EspLogger::initialize_default();
 
     let peripherals = Peripherals::take().unwrap();
-    let rmt_channel = peripherals.rmt.channel0;
-    let pin = peripherals.pins.gpio14;
+    let sysloop = EspSystemEventLoop::take().unwrap();
+    let nvs = EspDefaultNvsPartition::take().unwrap();
 
-    let mut ir_tx = IrTx::new(rmt_channel, pin).unwrap();
+    let wifi_driver = BlockingWifi::wrap(
+        EspWifi::new(peripherals.modem, sysloop.clone(), Some(nvs.clone())).unwrap(),
+        sysloop,
+    )
+    .unwrap();
 
-    let data = IrData {
-        ac_mode: AcMode::Ventilation,
-        on_off: true,
-        fan_mode: FanMode::Low,
-        swing: false,
-        temperature: Temperature::T24,
-    };
+    let _wifi = Provisioner::new(wifi_driver, nvs)
+        .ap_ssid("ForestAir-Setup")
+        .provision()
+        .unwrap();
 
-    let payload = pack_ir_payload(data);
+    log::info!("WiFi ready, starting AC server");
+
+    let ir_tx = Arc::new(Mutex::new(
+        IrTx::new(peripherals.rmt.channel0, peripherals.pins.gpio14).unwrap(),
+    ));
+
+    let _server = AcServer::new(ir_tx).unwrap();
 
     loop {
-        ir_tx.send_ir(payload).unwrap();
-        thread::sleep(Duration::from_secs(3));
+        std::thread::sleep(std::time::Duration::from_secs(60));
     }
 }

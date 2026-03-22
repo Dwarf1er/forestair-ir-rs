@@ -1,0 +1,194 @@
+*, *::before, *::after {
+     box-sizing:border-box;
+     margin:0;
+     padding:0;
+}
+ :root {
+     --bg:#0f1117;
+     --surface:#1c1f2b;
+     --surface2:#252838;
+     --accent:#4f8ef7;
+     --accent-on:#3a7be0;
+     --text:#e8eaf0;
+     --muted:#7a7f99;
+     --danger:#e05c5c;
+     --radius:12px;
+}
+ body {
+     background:var(--bg);
+     color:var(--text);
+     font-family:system-ui, -apple-system, sans-serif;
+     min-height:100dvh;
+     display:flex;
+     align-items:center;
+     justify-content:center;
+     padding:1rem;
+}
+ main {
+     background:var(--surface);
+     border-radius:20px;
+     padding:1.75rem 1.5rem;
+     width:100%;
+     max-width:380px;
+     display:flex;
+     flex-direction:column;
+     gap:1.5rem;
+}
+ header {
+     display:flex;
+     align-items:center;
+     justify-content:space-between;
+}
+ h1 {
+     font-size:1.3rem;
+     font-weight:600;
+     letter-spacing:.04em;
+     color:var(--text);
+}
+ .power-btn {
+     background:var(--surface2);
+     border:2px solid transparent;
+     color:var(--muted);
+     border-radius:50%;
+     width:48px;
+     height:48px;
+     cursor:pointer;
+     transition:color .2s, border-color .2s, background .2s;
+}
+ .power-btn.on {
+     color:#5de08a;
+     border-color:#5de08a;
+     background:rgba(93,224,138,.1);
+}
+ .temp-section {
+     display:flex;
+     align-items:center;
+     justify-content:center;
+     gap:1.5rem;
+}
+ .temp-display {
+     display:flex;
+     align-items:flex-start;
+     gap:.2rem;
+     line-height:1;
+}
+ #temp-value {
+     font-size:4rem;
+     font-weight:700;
+}
+ .temp-unit {
+     font-size:1.4rem;
+     font-weight:500;
+     color:var(--muted);
+     margin-top:.4rem;
+}
+ .temp-btn {
+     font-size:2rem;
+     font-weight:300;
+     background:var(--surface2);
+     border:none;
+     color:var(--text);
+     border-radius:var(--radius);
+     width:52px;
+     height:52px;
+     cursor:pointer;
+     transition:background .15s;
+}
+ .temp-btn:active {
+     background:var(--accent-on);
+}
+ .modes {
+     display:flex;
+     flex-direction:column;
+     gap:1rem;
+}
+ .mode-group {
+     display:flex;
+     flex-direction:column;
+     gap:.5rem;
+}
+ .group-label {
+     font-size:.75rem;
+     font-weight:600;
+     color:var(--muted);
+     text-transform:uppercase;
+     letter-spacing:.06em;
+}
+ .btn-row {
+     display:flex;
+     gap:.4rem;
+     flex-wrap:wrap;
+}
+ .mode-btn {
+     flex:1;
+     min-width:fit-content;
+     padding:.45rem .6rem;
+     background:var(--surface2);
+     border:2px solid transparent;
+     color:var(--muted);
+     border-radius:8px;
+     font-size:.85rem;
+     cursor:pointer;
+     transition:color .15s, border-color .15s, background .15s;
+     white-space:nowrap;
+}
+ .mode-btn.active {
+     color:var(--accent);
+     border-color:var(--accent);
+     background:rgba(79,142,247,.12);
+}
+ .swing-group {
+     flex-direction:row;
+     align-items:center;
+     justify-content:space-between;
+}
+ .toggle-btn {
+     padding:.45rem 1.25rem;
+     background:var(--surface2);
+     border:2px solid transparent;
+     color:var(--muted);
+     border-radius:8px;
+     font-size:.85rem;
+     cursor:pointer;
+     transition:color .15s, border-color .15s, background .15s;
+}
+ .toggle-btn.active {
+     color:var(--accent);
+     border-color:var(--accent);
+     background:rgba(79,142,247,.12);
+}
+ .status {
+     font-size:.85rem;
+     color:var(--muted);
+     text-align:center;
+     min-height:1.2em;
+}
+ .status.ok {
+     color:#5de08a;
+}
+ .status.err {
+     color:var(--danger);
+}
+ .send-btn {
+     width:100%;
+     padding:.85rem;
+     background:var(--accent);
+     border:none;
+     border-radius:var(--radius);
+     color:#fff;
+     font-size:1rem;
+     font-weight:600;
+     cursor:pointer;
+     transition:background .15s, opacity .15s;
+}
+ .send-btn:hover {
+     background:var(--accent-on);
+}
+ .send-btn:active {
+     opacity:.8;
+}
+ .send-btn:disabled {
+     opacity:.5;
+     cursor:not-allowed;
+}
+ 
