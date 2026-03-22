@@ -50,7 +50,7 @@ This project implements an infrared transmitter for controlling [ForestAir](http
 
 The web UI:
 
-![Web UI screenshot](./assets/screenshot.png)
+<img alt="Web UI screenshot" src="./assets/screenshot.png" height="400" />
 
 ## Getting started
 
