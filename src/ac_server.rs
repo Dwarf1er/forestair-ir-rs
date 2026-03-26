@@ -12,6 +12,8 @@ use crate::ir_tx::{IrTx, IrTxError};
 
 /// Minified control UI, bundled at compile time by `build.rs`.
 static INDEX_HTML: &str = include_str!(concat!(env!("OUT_DIR"), "/ac.min.html"));
+static MANIFEST: &str = include_str!(concat!(env!("OUT_DIR"), "/manifest.json"));
+static ICON: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/icon.png"));
 
 #[derive(Debug)]
 pub enum AcServerError {

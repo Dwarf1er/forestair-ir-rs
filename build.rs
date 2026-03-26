@@ -38,9 +38,16 @@ fn main() {
 
     fs::write(out_dir.join("ac.min.html"), &minified).unwrap();
 
+    fs::copy("./src/web/manifest.json", out_dir.join("manifest.json"))
+        .expect("failed to copy src/web/manifest.json");
+    fs::copy("./src/web/icon.png", out_dir.join("icon.png"))
+        .expect("failed to copy src/web/icon.png");
+
     println!("cargo:rerun-if-changed=./src/web/index.html");
     println!("cargo:rerun-if-changed=./src/web/style.css");
     println!("cargo:rerun-if-changed=./src/web/app.js");
+    println!("cargo:rerun-if-changed=./src/web/manifest.json");
+    println!("cargo:rerun-if-changed=./src/web/icon.png");
 }
 
 fn strip_dev_block(src: &str, start_marker: &str, end_marker: &str) -> String {
