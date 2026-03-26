@@ -203,6 +203,22 @@ impl AcServer {
             })
             .map_err(|e| AcServerError::Http(e.into()))?;
 
+        server
+            .fn_handler("/manifest.json", esp_idf_svc::http::Method::Get, |req| {
+                req.into_response(200, None, &[("Content-Type", "application/manifest+json")])?
+                    .write_all(MANIFEST.as_bytes())
+                    .map(|_| ())
+            })
+            .map_err(|e| AcServerError::Http(e.into()))?;
+
+        server
+            .fn_handler("/icon.png", esp_idf_svc::http::Method::Get, |req| {
+                req.into_response(200, None, &[("Content-Type", "image/png")])?
+                    .write_all(ICON)
+                    .map(|_| ())
+            })
+            .map_err(|e| AcServerError::Http(e.into()))?;
+
         let state_w = Arc::clone(&state);
         server
             .fn_handler(
