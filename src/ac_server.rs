@@ -13,7 +13,10 @@ use crate::ir_tx::{IrTx, IrTxError};
 /// Minified control UI, bundled at compile time by `build.rs`.
 static INDEX_HTML: &str = include_str!(concat!(env!("OUT_DIR"), "/ac.min.html"));
 static MANIFEST: &str = include_str!(concat!(env!("OUT_DIR"), "/manifest.json"));
-static ICON: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/icon.png"));
+static FAVICON: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/favicon.ico"));
+static ICON192: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/icon-192.png"));
+static ICON512: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/icon-512.png"));
+static SW: &str = include_str!(concat!(env!("OUT_DIR"), "/sw.js"));
 
 #[derive(Debug)]
 pub enum AcServerError {
@@ -212,9 +215,33 @@ impl AcServer {
             .map_err(|e| AcServerError::Http(e.into()))?;
 
         server
-            .fn_handler("/icon.png", esp_idf_svc::http::Method::Get, |req| {
+            .fn_handler("/favicon.ico", esp_idf_svc::http::Method::Get, |req| {
+                req.into_response(200, None, &[("Content-Type", "image/x-icon")])?
+                    .write_all(FAVICON)
+                    .map(|_| ())
+            })
+            .map_err(|e| AcServerError::Http(e.into()))?;
+
+        server
+            .fn_handler("/icon-192.png", esp_idf_svc::http::Method::Get, |req| {
                 req.into_response(200, None, &[("Content-Type", "image/png")])?
-                    .write_all(ICON)
+                    .write_all(ICON192)
+                    .map(|_| ())
+            })
+            .map_err(|e| AcServerError::Http(e.into()))?;
+
+        server
+            .fn_handler("/icon-512.png", esp_idf_svc::http::Method::Get, |req| {
+                req.into_response(200, None, &[("Content-Type", "image/png")])?
+                    .write_all(ICON512)
+                    .map(|_| ())
+            })
+            .map_err(|e| AcServerError::Http(e.into()))?;
+
+        server
+            .fn_handler("/sw.js", esp_idf_svc::http::Method::Get, |req| {
+                req.into_response(200, None, &[("Content-Type", "application/javascript")])?
+                    .write_all(SW.as_bytes())
                     .map(|_| ())
             })
             .map_err(|e| AcServerError::Http(e.into()))?;

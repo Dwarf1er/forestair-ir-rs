@@ -40,14 +40,22 @@ fn main() {
 
     fs::copy("./src/web/manifest.json", out_dir.join("manifest.json"))
         .expect("failed to copy src/web/manifest.json");
-    fs::copy("./src/web/icon.png", out_dir.join("icon.png"))
-        .expect("failed to copy src/web/icon.png");
+    fs::copy("./src/web/favicon.ico", out_dir.join("favicon.ico"))
+        .expect("failed to copy src/web/favicon.ico");
+    fs::copy("./src/web/icon-512.png", out_dir.join("icon-512.png"))
+        .expect("failed to copy src/web/icon-512.png");
+    fs::copy("./src/web/icon-192.png", out_dir.join("icon-192.png"))
+        .expect("failed to copy src/web/icon-192.png");
+    fs::copy("./src/web/sw.js", out_dir.join("sw.js")).expect("failed to copy src/web/sw.js");
 
     println!("cargo:rerun-if-changed=./src/web/index.html");
     println!("cargo:rerun-if-changed=./src/web/style.css");
     println!("cargo:rerun-if-changed=./src/web/app.js");
     println!("cargo:rerun-if-changed=./src/web/manifest.json");
-    println!("cargo:rerun-if-changed=./src/web/icon.png");
+    println!("cargo:rerun-if-changed=./src/web/favicon.ico");
+    println!("cargo:rerun-if-changed=./src/web/icon-192.png");
+    println!("cargo:rerun-if-changed=./src/web/icon-512.png");
+    println!("cargo:rerun-if-changed=./src/web/sw.js");
 }
 
 fn strip_dev_block(src: &str, start_marker: &str, end_marker: &str) -> String {
