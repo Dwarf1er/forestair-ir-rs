@@ -125,7 +125,7 @@ cargo run --release
 
 ### WiFi Provisioning
 
-On first boot, the ESP32 will broadcast a WiFi access point named `ForestAir-Setup`. Connect to it and follow the provisioning flow to configure your home network credentials. Credentials are stored in NVS flash and persist across reboots, so this only needs to be done once. Once connected to your network, the web UI is accessible at http://ac.local.
+WiFi provisioning is handled by the [esp-wifi-provisioning](https://github.com/Dwarf1er/esp-wifi-provisioning) crate, also developed by the author of this project. On first boot, the ESP32 will broadcast a WiFi access point named `ForestAir-Setup`. Connect to it and follow the provisioning flow to configure your home network credentials. Credentials are stored in NVS flash and persist across reboots, so this only needs to be done once. Once connected to your network, the web UI is accessible at http://ac.local.
 
 ## ForestAir IR Protocol Overview
 
