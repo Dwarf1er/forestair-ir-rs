@@ -87,9 +87,5 @@
     function init() { render(); }
     // END_DEV
 
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
-    }
-
     init();
 })();

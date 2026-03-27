@@ -46,7 +46,6 @@ fn main() {
         .expect("failed to copy src/web/icon-512.png");
     fs::copy("./src/web/icon-192.png", out_dir.join("icon-192.png"))
         .expect("failed to copy src/web/icon-192.png");
-    fs::copy("./src/web/sw.js", out_dir.join("sw.js")).expect("failed to copy src/web/sw.js");
 
     println!("cargo:rerun-if-changed=./src/web/index.html");
     println!("cargo:rerun-if-changed=./src/web/style.css");
@@ -55,7 +54,6 @@ fn main() {
     println!("cargo:rerun-if-changed=./src/web/favicon.ico");
     println!("cargo:rerun-if-changed=./src/web/icon-192.png");
     println!("cargo:rerun-if-changed=./src/web/icon-512.png");
-    println!("cargo:rerun-if-changed=./src/web/sw.js");
 }
 
 fn strip_dev_block(src: &str, start_marker: &str, end_marker: &str) -> String {
