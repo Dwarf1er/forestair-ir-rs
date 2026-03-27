@@ -24,17 +24,17 @@ This project implements an infrared transmitter for controlling [ForestAir](http
 * [Screenshot](#screenshot)
 * [Getting started](#getting-started)
   * [Hardware Requirements](#hardware-requirements)
-  * [Project Template](#project-template)
+  * [Wiring](#wiring)
   * [System prerequisites](#system-prerequisites)
   * [Setup Script](#setup-script)
   * [ESP-IDF Submodules](#esp-idf-submodules)
   * [User Permissions for Serial](#user-permissions-for-serial)
   * [Building and Flashing](#building-and-flashing)
+  * [WiFi Provisioning](#wifi-provisioning)
 * [ForestAir IR Protocol Overview](#forestair-ir-protocol-overview)
   * [IR Timing Specification](#ir-timing-specification)
   * [Pulse-Distance Encoding Diagram](#pulse-distance-encoding-diagram)
   * [Frame Format](#frame-format)
-  * [Fixed Header Constant](#fixed-header-constant)
   * [Payload Format](#payload-format)
     * [AC Modes Encoding](#ac-modes-encoding)
     * [Fan Speeds Encoding](#fan-speeds-encoding)
@@ -57,52 +57,44 @@ The web UI:
 ### Hardware Requirements
 
 * ESP32 (any variant with RMT peripheral)
-* IR Transmitter (IR LED + driver)
+* IR transmitter module; this project was built using the DUTTY Digital 38kHz IR Transmitter Sensor Module (or equivalent 3-pin Arduino-compatible IR transmitter module)
 
-Default RMT setup:
-```bash
-TX Pin: GPIO14
-RMT Channel: 0
-Carrier: 38 kHz @ 33% duty
-```
+### Wiring
 
-### Project Template
-
-This project was generated using [the esp-idf-template](https://github.com/esp-rs/esp-idf-template)
-```bash
-cargo install cargo-generate
-cargo generate esp-rs/esp-idf-template cargo
-```
+| Module Pin | ESP32 Pin |
+|:----------:|:---------:|
+|     DAT    |   GPIO14  |
+|     VCC    |    3.3V   |
+|     GND    |    GND    |
 
 ### System prerequisites
 
 To get started with this project, make sure to install the following dependencies on your system.
 
-Arch based (via Pacman):
+Arch based (via pacman):
 ```bash
-sudo pacman -S git cmake ninja python python-pip python-virtualenv dfu-util libusb ccache gcc pkg-config clang llvm libxml2 libxml2-legacy dotenv
+sudo pacman -S git cmake ninja python python-pip python-virtualenv dfu-util libusb ccache gcc pkg-config clang llvm libxml2 libxml2-legacy direnv
 ```
 
 Debian based (via apt):
 ```bash
-sudo apt-get install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0 dotenv
+sudo apt-get install git wget flex bison gperf python3 python3-pip python3-venv cmake ninja-build ccache libffi-dev libssl-dev dfu-util libusb-1.0-0 direnv
 ```
 
 ### Setup Script
 
 After having installed the dependencies and having cloned the repository, run the setup script at the root of the repository:
 ```bash
-chmod +x ./setup.sh
 ./setup.sh
 ```
 
 ### ESP-IDF Submodules
 
-ESP-IDF uses git submodules for its dependencies. You need to initialize them:
+ESP-IDF uses git submodules for its dependencies. After your first cargo build, initialize them with:
 ```bash
-cd .embuild/espressif/esp-idf/v<version number>
-git submodule update --init --recursive
+git submodule update --init --recursive .embuild/espressif/esp-idf/v*/
 ```
+> Note: The .embuild directory is created by cargo on first build, so this step must be done after building once.
 
 ### User Permissions for Serial
 
@@ -121,15 +113,19 @@ Debian-based:
 sudo usermod -aG dialout $USER
 newgrp dialout
 ```
+> Note: logging out and logging back in is probably preferable to using `newgrp` as it only applies to the current shell session, but it will work just as well.
 
 ### Building and Flashing
 
 Connect your ESP32, then:
 
 ```bash
-cd forestair-ir-rs
 cargo run --release
 ```
+
+### WiFi Provisioning
+
+On first boot, the ESP32 will broadcast a WiFi access point named `ForestAir-Setup`. Connect to it and follow the provisioning flow to configure your home network credentials. Credentials are stored in NVS flash and persist across reboots, so this only needs to be done once. Once connected to your network, the web UI is accessible at http://ac.local.
 
 ## ForestAir IR Protocol Overview
 
@@ -160,13 +156,11 @@ Bit '1'  ───650µs HIGH──────────1650µs LOW──
 ### Frame Format
 
 A full IR frame will consist of the following:
-* Header mark + header space
-* 35 data bits (LSB first)
-* Stop bit (650 µs high)
+* Header: 9000 µs mark + 4450 µs space
+* 35 data bits (see Payload Format)
+* Stop bit: 650 µs mark + no space
 
-### Fixed Header Constant
-
-0x250000000
+The first bits are always 0x250000 (a fixed constant, determined by reverse-engineering, its meaning is unknown). The remaining bits carry the parametrized payload.
 
 ### Payload Format
 
@@ -177,7 +171,6 @@ A full IR frame will consist of the following:
 |  4–6  |   fanMode   | 3    | Fan speed                 |
 |   7   |    swing    | 1    | Swing on/off              |
 |  8–11 | temperature | 4    | 16–30 °C encoded as index |
-| 12–15 |   reserved  | 4    | Always 0                  |
 
 #### AC Modes Encoding
 
@@ -235,16 +228,21 @@ reserved    = 0     (bits 12–15)
 ```
 
 Final frame:
-```plaintext
-rawFrame = 0x250000000 | payload
+```markdown
+010 0101 0000 0000 0000 0000  0100 0  011  1  001
+├───────────────────────────┤ ├──┤ │  ├──┤ │   └───  Mode  (001)
+           Fixed                │  │    │  └───────  Power (1)
+                                │  │    └──────────  Fan   (011)
+                                │  └───────────────  Swing (0)
+                                └──────────────────  Temp  (0100)
 ```
 
 ## Troubleshooting
 
 My ForestAir AC unit doesn't seem to turn on if the "Heat" mode is selected, whether on the original remote or with my ESP32. Therefore, if your AC doesn't turn on:
 * Try selecting: `Ventilation`, `Cool`, or `Auto` instead
-* Confirm temperature index is between 16-30
+* Confirm temperature index is between 16°C-30°C
 
 ## License
 
-This software is licensed under the [MIT license](LICENSE)
+This software is licensed under the [MIT license](LICENSE).

@@ -19,9 +19,15 @@ for tool in ldproxy espflash cargo-espflash; do
     fi
 done
 
+# Check for direnv install, ask to run direnv allow if present
 if ! command -v direnv >/dev/null 2>&1; then
     echo "Warning: direnv is not installed. Install it to automatically load environment variables."
     echo "See https://direnv.net/ for installation instructions."
+else
+    printf "Run 'direnv allow' now? [y/N] "
+    read -r answer
+    case $answer in
+        [yY]) direnv allow ;;
+        *) echo "Run 'direnv allow' when ready." ;;
+    esac
 fi
-
-echo "Setup complete. Run 'direnv allow .' to activate the environment."
