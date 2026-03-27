@@ -1,7 +1,7 @@
 {
   "name": "ForestAir",
   "short_name": "ForestAir",
-  "display": "fullscreen",
+  "display": "standalone",
   "background_color": "#0f1117",
   "theme_color": "#0f1117",
   "id": "/",
